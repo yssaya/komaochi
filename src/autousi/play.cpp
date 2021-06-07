@@ -184,9 +184,11 @@ class USIEngine : public Child {
   uint _eid, _nmove;
   bool _flag_playing, _flag_ready, _flag_thinking, _flag_do_resign;
   int _handicap;
+  uint _silent_eng;
 
   void out_log(const char *p) noexcept {
     assert(_ofs && p);
+    if ( _silent_eng ) return;
     _ofs << p << endl;
     if (!_ofs) die(ERR_INT("cannot write to log")); }
 
@@ -211,12 +213,13 @@ class USIEngine : public Child {
 public:
   explicit USIEngine(const FName &cname, char ch, int device_id, int nnet_id,
 		     uint eid, const FNameID &wfname, uint64_t crc64,
-		     uint verbose_eng, const FName &logname) noexcept :
+		     uint verbose_eng, uint silent_eng, const FName &logname) noexcept :
   _time_average_nume(0.0), _time_average_deno(0.0), _time_average(0.0),
     _logname(logname),
     _fingerprint(to_string(nnet_id) + string("-") + to_string(eid)),
     _id_wght(wfname.get_id()), _crc64_wght(crc64),
     _device_id(device_id), _nnet_id(nnet_id), _version(-1), _eid(eid),
+    _silent_eng(silent_eng),
     _nmove(0),
     _flag_playing(false), _flag_ready(false), _flag_thinking(false),
     _flag_do_resign(false) {
@@ -522,8 +525,7 @@ public:
       return move(rec);
     }
 
-    return string("");
-  }
+    return string(""); }
 
   void engine_quit() noexcept { engine_out("quit"); }
   uint getline_in(char *line, uint size) noexcept {
@@ -553,12 +555,13 @@ PlayManager & PlayManager::get() noexcept {
 PlayManager::PlayManager() noexcept : _ngen_records(0), _num_thinking(0) {}
 PlayManager::~PlayManager() noexcept {}
 void PlayManager::start(const char *cname, const char *dlog, const char *dtune,
-			const vector<string> &devices_str, uint verbose_eng,
+			const vector<string> &devices_str, uint verbose_eng, uint silent_eng,
 			uint sleep_opencl, const FNameID &wfname,
 			uint64_t crc64) noexcept {
   assert(cname && dlog && dtune && wfname.ok() && _engines.empty());
   if (devices_str.empty()) die(ERR_INT("bad devices"));
   _verbose_eng = verbose_eng;
+  _silent_eng  = silent_eng;
   _cname.reset_fname(cname);
   _logname.reset_fname(dlog);
   _wid = wfname.get_id();
@@ -578,7 +581,7 @@ void PlayManager::start(const char *cname, const char *dlog, const char *dtune,
     char ch       = d.get_id_option_character();
     for (uint u = 0; u < size; ++u)
       _engines.emplace_back(new USIEngine(_cname, ch, device_id, nnet_id,
-					  eid++, wfname, crc64, _verbose_eng,
+					  eid++, wfname, crc64, _verbose_eng, _silent_eng,
 					  _logname )); } }
 
 void PlayManager::end() noexcept {

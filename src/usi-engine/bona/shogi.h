@@ -121,7 +121,8 @@ extern unsigned char ailast_one[512];
 //#define BNZ_VER                 "13"	// 20201023 resign 10%
 //#define BNZ_VER                 "14"	// 20201108 declare win bug fix. fAutoResign
 //#define BNZ_VER                 "15"	// 20201207 sente 1 mate bug fix
-#define BNZ_VER                 "16"	// 20210528 komaochi, mate3
+//#define BNZ_VER                 "16"	// 20210528 komaochi, mate3
+#define BNZ_VER                 "17"	// 20210607 bug fix. does not tend to move 1 ply mate.
 #define BNZ_NAME                "AobaKomaochi"
 
 #define REP_MAX_PLY             32

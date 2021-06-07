@@ -638,7 +638,7 @@ static int get_options(int argc, const char * const *argv) noexcept {
     case 'd':
       num_d = strtol(Opt::arg, &endptr, 10);
       if (endptr == Opt::arg || *endptr != '\0'
-	  || num_d == LONG_MAX || num_d < 1) flag_err = true;
+	  || num_d >= HANDICAP_TYPE || num_d < 1) flag_err = true;
       break;
     case 'm':
       num_m = strtol(Opt::arg, &endptr, 10);
@@ -719,7 +719,8 @@ static int get_options(int argc, const char * const *argv) noexcept {
     cout << "'Fix color?  " << (flag_f ? "Yes\n" : "No\n");
     cout << "'Out USI?    " << (flag_u ? "Yes\n" : "No\n");
     cout << "'Book?       " << (flag_b ? "Yes\n" : "No\n");
-    cout << "'Parallel:    " << num_P << "\n";
+    cout << "'Parallel:   " << num_P << "\n";
+    cout << "'Handicap:   " << num_d << "\n";
     for (int i = 0; i < num_N; ++i) {
       cout << "'NNet" << i << ":\n";
       cout << "'- Implimentation " << (int)impl_I[i] << "\n";

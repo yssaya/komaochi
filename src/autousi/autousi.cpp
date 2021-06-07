@@ -68,6 +68,7 @@ static string str_dtune;
 static string str_cname;
 static string str_dlog;
 static uint verbose_eng;
+static uint silent_eng;
 static uint sleep_opencl;
 static vector<string> devices;
 
@@ -111,6 +112,7 @@ static void init() noexcept {
 			   {"PrintStatus",   "0"},
 			   {"PrintCSA",      "0"},
 			   {"VerboseEngine", "0"},
+			   {"SilentEngine",  "0"},
 			   {"KeepWeight",    "0"},
 			   {"Addr",          "127.0.0.1"},
 			   {"Port",          "20001"}};
@@ -131,6 +133,7 @@ static void init() noexcept {
   opt_max_csa            = Config::get<uint>  (m, "MaxCSA");
   uint keep_wght         = Config::get<uint>  (m, "KeepWeight");
   verbose_eng            = Config::get<uint>  (m, "VerboseEngine");
+  silent_eng             = Config::get<uint>  (m, "SilentEngine");
   uint port              = Config::get<ushort>(m, "Port");
   devices                = Config::get_vecstr (m, "Device");
   print_status           = Config::get<uint>  (m, "PrintStatus");
@@ -253,7 +256,7 @@ int main() {
   init();
   std::shared_ptr<const WghtFile> wght = Client::get().get_wght();
   PlayManager::get().start(str_cname.c_str(), str_dlog.c_str(),
-			   str_dtune.c_str(), devices, verbose_eng,
+			   str_dtune.c_str(), devices, verbose_eng, silent_eng,
 			   sleep_opencl, wght->get_fname(), wght->get_crc64());
 
   cout << "self-play started" << endl;
@@ -264,6 +267,7 @@ int main() {
     wght = Client::get().get_wght();
     float th_resign  = Client::get().get_th_resign();
     const uint *phandicap_rate = Client::get().get_handicap_rate();
+
     deque<string> recs
       = PlayManager::get().manage_play(Client::get().has_conn(),
 				       wght->get_fname(), wght->get_crc64(),

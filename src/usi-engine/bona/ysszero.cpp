@@ -774,6 +774,9 @@ int is_limit_sec()
 	return 0;
 }
 
+bool is_do_mate3() { return false; }
+bool is_use_exact() { return false; }	// 有効だと駒落ちで最後の1手詰を見つけたら高確率でその1手だけを探索した、と扱われる
+
 void uct_tree_loop(tree_t * restrict ptree, int sideToMove, int ply)
 {
 	ptree->sum_reached_ply = 0;
@@ -792,12 +795,9 @@ void uct_tree_loop(tree_t * restrict ptree, int sideToMove, int ply)
 			if ( is_limit_sec() ) set_stop_search();
 		}
 		if ( is_stop_search() ) break;
-		if ( exact_value == EX_WIN || exact_value == EX_LOSS ) break;
+		if ( is_use_exact() && (exact_value == EX_WIN || exact_value == EX_LOSS) ) break;
 	}
 }
-
-bool is_do_mate3() { return false; }
-bool is_use_exact() { return false; }	// 有効だと駒落ちで最後の1手詰を見つけたら高確率でその1手だけを探索した、と扱われる
 
 int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf_move_count)
 {

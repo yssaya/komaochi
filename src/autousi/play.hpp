@@ -15,7 +15,7 @@ class PlayManager {
   std::vector<class Device> _devices;
   std::vector<std::unique_ptr<class USIEngine>> _engines;
   int64_t _wid;
-  uint _max_csa, _ngen_records, _num_thinking, _verbose_eng;
+  uint _max_csa, _ngen_records, _num_thinking, _verbose_eng, _silent_eng;
   FName _cname, _logname;
   PlayManager() noexcept;
   ~PlayManager() noexcept;
@@ -25,7 +25,7 @@ class PlayManager {
 public:
   static PlayManager & get() noexcept;
   void start(const char *cname, const char *dlog, const char *dtune,
-	     const std::vector<std::string> &devices, uint verbose_eng,
+	     const std::vector<std::string> &devices, uint verbose_eng, uint silent_eng,
 	     uint sleep_opencl, const FNameID &wfname, uint64_t crc64)
     noexcept;
   void end() noexcept;
