@@ -144,7 +144,7 @@ static constexpr auto MAX_CPUS = 256;
 #ifdef USE_OPENCL
 // If OpenCL are fully usable, then check the OpenCL against CPU
 // implementation with some probability.
-#define USE_OPENCL_SELFCHECK
+//#define USE_OPENCL_SELFCHECK
 static constexpr auto SELFCHECK_PROBABILITY = 2000;
 #endif
 

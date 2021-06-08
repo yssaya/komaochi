@@ -638,7 +638,7 @@ static int get_options(int argc, const char * const *argv) noexcept {
     case 'd':
       num_d = strtol(Opt::arg, &endptr, 10);
       if (endptr == Opt::arg || *endptr != '\0'
-	  || num_d >= HANDICAP_TYPE || num_d < 1) flag_err = true;
+	  || num_d >= HANDICAP_TYPE || num_d < 0) flag_err = true;
       break;
     case 'm':
       num_m = strtol(Opt::arg, &endptr, 10);
