@@ -1458,7 +1458,7 @@ select_again:
 
 	UnMakeMove( sideToMove, pc->move, ply );
 
-	if ( pc->exact_value == EX_WIN ) {	// この手を指せば勝
+	if ( is_use_exact() && pc->exact_value == EX_WIN ) {	// この手を指せば勝
 		*pExactValue = EX_LOSS;
 		PRT("mate: ply=%2d,col=%d,move=%08x(%s)win=%.1f -> +1.0\n",ply,sideToMove, MOVE_CURR,string_CSA_move(MOVE_CURR).c_str(),win);
 		win = +1.0;
