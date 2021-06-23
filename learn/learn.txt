@@ -1,0 +1,52 @@
+学習プログラムの使い方
+
+Ubuntu 20.04.2, cuda-11.2, cuDNN 8.1.1, RTX 3090 で動作を確認しています。
+実行には Caffe が必要です。Caffeは公式版(1.0)では3090で動作しないので、下を使っています。
+
+Install OpenCV 4.4.0 and Caffe on Ubuntu 20.04 for Python 3
+https://qengineering.eu/install-caffe-on-ubuntu-20.04-with-opencv-4.4.html
+
+xzと開発環境をinstallします。
+
+$ sudo apt install xz-utils liblzma-dev
+
+archive, pool, handicap ディレクトリを作って yss_dcnn.cpp で指定します。
+  char dir_arch[] = "/home/yss/koma_syn/archive/";
+  char dir_pool[] = "/home/yss/koma_syn/pool";
+  const char HANDICAP_SYN[] = "/home/yss/koma_syn/handicap/handicap.txt";
+
+archive/ の下に
+  arch000000000000.csa.xz から
+  arch000000200000.csa.xz
+ぐらいまでを置きます。
+https://drive.google.com/drive/folders/1dbE5xWGQLsduR00oxEGPpZQJtQr_EQ75
+
+$ make
+$ learn
+
+で実行します。
+10万棋譜を読み込んだ後、2000棋譜追加ごとに2000回学習、を繰り返します。
+過去10万棋譜からランダムに128局面を取り出して128 minibatchで学習します。
+
+
+実際の強化学習を行うには
+yss_dcnn.cpp の
+fReplayLearning = 0;
+ZERO_DB_SIZE = 500000;
+にして、pool/ の下に最新の棋譜が
+no000000000000.csa.xz
+no000000000001.csa.xz
+...
+と溜まっていくようにします。
+
+no000000010000.csa.xz
+を作ると
+no000000000000.csa.xz
+...
+no000000009999.csa.xz
+まではpoolから消えて
+archive/arch000000000000.csa.xz
+が作られるようにします。詳しくはサーバ側をご覧ください。
+
+過去50万棋譜まで見るにはメモリが最低でも19GB以上必要です。
+

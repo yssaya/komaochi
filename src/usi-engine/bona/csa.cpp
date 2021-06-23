@@ -428,7 +428,8 @@ str_CSA_move( unsigned int move )
   static char str[7];
   std::string csa_str = string_CSA_move( move );
   if ( csa_str.size() >= 7 ) { printf("str_CSA_move() err.\n"); exit(0); }
-  strcpy(str, csa_str.c_str());
+  strncpy(str, csa_str.c_str(), 7);
+  str[7-1] = 0;
   return str;
 }
 

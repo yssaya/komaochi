@@ -186,7 +186,7 @@ static void output() noexcept {
   print_csa_num   = 0;
   time_last       = time_now;
   puts("");
-  puts("+---+---+--------+-------< Aobaz Status >--------------------------+");
+  puts("+---+---+--------+-------< Aobak Status >--------------------------+");
   puts("|ID |Dev| Average|                   Moves                         |");
   puts("+---+---+--------+-------------------------------------------------+");
   for (uint u = 0; u < PlayManager::get().get_nengine(); ++u) {
