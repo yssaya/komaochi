@@ -22,7 +22,12 @@ GPUがついたマシンは
 ```
 aobakomaochi-1.0-w64-opencl.zip
 ```
-をダウンロード、展開して、中のclick_me.batを実行してください。
+をダウンロード、展開して、中のclick_me.batを実行してください。  
+GPUの種類によっては autousi.cfg の  
+```
+Device        O-1:7:21W
+```
+を変更することでより高速で動作する場合があります。[autousi.cfg](autousi.cfg) の他のサンプルをご参考下さい。
 
 Linuxの方は
 ```
