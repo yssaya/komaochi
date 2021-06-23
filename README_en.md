@@ -1,5 +1,5 @@
 # AobaKomaochi
-AobaKomaochi is a distributed Deep reinforcement learning for Shogi handicap games without human knowledge.  
+[AobaKomaochi](https://github.com/yssaya/komaochi/index_e.html) is a distributed Deep reinforcement learning for Shogi handicap games without human knowledge.  
 Handicaps are seven kinds. Lance(kyo ochi), Bishop(kaku ochi), Rook(hisha ochi), 2-Piece(ni-mai ochi), 4-Piece(yon-mai ochi), 6-Pieces(roku-mai ochi) and No handicap(hirate).  
 Winrate are adjusted to keep 0.5 by weakening Black(shitate or sente) player strength.  
 Can AI discover a new opening, or rediscover Two-Pawn Sacrifice Push, Silver Tandem, etc?  
@@ -66,7 +66,8 @@ There are game records, network weights, ELO progress and some self-play game sa
 <http://www.yss-aya.com/komaochi/index_e.html>
 
 # License
-USI engine aobaz belongs to GPL v3. Others are in the public domain.
+USI engine aobak belongs to GPL v3. Others are in the public domain.
+Short [license](license.txt).  
 Detail is in the licenses in aobakomaochi-1.0.tar.gz.
 
 # Link
