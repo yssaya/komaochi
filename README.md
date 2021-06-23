@@ -5,7 +5,7 @@ The text written in English is [here](README_en.md).
 香落、角落、飛落、2枚落、4枚落、6枚落、平手、の7種類を同時に学習します。勝率が5割になるように下手(先手)の強さを自動調節しています。  
 AIは新定跡を発見、または二枚落ちの二歩突き切り、銀多伝などを再発見できるでしょうか？  
 
-集めた棋譜や棋力のグラフ、棋譜のサンプルなどは[ウェブページ](http://www.yss-aya.com/komaochi/)で公開しています。  
+集めた棋譜や棋力のグラフ、棋譜のサンプルなどは[こちら](http://www.yss-aya.com/komaochi/)で公開しています。  
 [AobaZero](http://www.yss-aya.com/aobazero/)との[違い](http://www.yss-aya.com/komaochi/diff.html)など。 
 
 GPUがあれば、より高速に棋譜を生成できます。  
@@ -32,7 +32,7 @@ komaochi-1.0.tar.gz
 ```
 ./bin/autousi
 ```
-を実行してください。詳しくは同梱のcompile.txtをご覧ください。
+を実行してください。
 
 # 将棋所で遊んでみたい
 CPU版をダウンロードして、click_me.batを実行します。しばらくすると最新のネットワークの重みファイルをダウンロードして「self-play started」が表示されて棋譜の生成を開始します。すかさずCtrl + Cで停止させます。(signal 1 caught)が表示されて、しばらく待つと止まります。  
@@ -48,7 +48,7 @@ bin\aobak -q -i -p 100 -w weight-save\w000000000066.txt
 "-p 100"の100を増やすと強くなりますが、思考時間が長くなります。
 CPU版は100で5秒ほどかかります。GPU版は4000で3秒ほどかかります(GPUの性能に依存します)。
 
-将棋所はusiエンジンを動作させる将棋用のGUIです。こちらで入手できます。
+将棋所はusiエンジンを動作させる将棋用のGUIです。こちらで入手できます。  
 将棋所のページ
 <http://shogidokoro.starfree.jp/>
 
@@ -63,7 +63,7 @@ ShogiGUIのページ
 <http://shogigui.siganus.com/>
 
 # コンパイルの仕方
-[コンパイル](compile.txt)。
+[こちら](compile.txt)をご覧ください。
 
 # Aoba駒落ちの紹介ページ
 今までに作成した棋譜や重み、棋譜のサンプルなどを公開しています。  
@@ -71,8 +71,8 @@ ShogiGUIのページ
 
 # License
 usiエンジンであるaobakはGPL v3です。それ以外はpublic domainです。  
-<https://github.com/yssaya/komaochi/license.txt>
-詳しくは aobakomaochi-1.0.tar.gz 内のlicensesをご覧ください。
+[短めのライセンス](license.txt)  
+詳しくは aobakomaochi-1.0.tar.gz 内の licenses をご覧ください。
 
 # Link
  - [AobaZero](https://github.com/kobanium/aobazero)
