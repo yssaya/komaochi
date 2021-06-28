@@ -955,14 +955,21 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 	double softmax_temp = cfg_random_temp;
 	int rate = nHandicapRate[nHandicap];
 	int is_weaken = 0;
+
 	// 1400点差まではsoftmaxの温度で。1400+1157 = 2557差までは合法手ランダムで。
-	if ( is_opening_random == 0 && rate > 0 && sideToMove == black ) {	// 先手、もしくは下手のみを弱く
-		is_weaken = 1;
+	if ( rate > 0 && sideToMove == black ) {	// 先手、もしくは下手のみを弱く
+		double t = 0;
+		double s = 0;
 		if ( rate <= TEMP_RATE_MAX ) {
-			softmax_temp = get_sigmoid_temperature_from_rate(rate);
+			t = get_sigmoid_temperature_from_rate(rate);
 		} else {
-			softmax_temp = 6.068;
-			select_rand_prob = get_sel_rand_prob_from_rate(rate - TEMP_RATE_MAX);
+			t = 6.068;
+			s = get_sel_rand_prob_from_rate(rate - TEMP_RATE_MAX);
+		}
+		if ( is_opening_random == 0 || (is_opening_random && t > 1.0) ) {	// 31手以上、または30手以下で温度1を超えてたら適用
+			is_weaken = 1;
+			softmax_temp     = t;
+			select_rand_prob = s;
 		}
 	}
 
