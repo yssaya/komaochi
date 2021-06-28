@@ -799,6 +799,8 @@ static int get_options(int argc, const char * const *argv) noexcept {
 
     auto c1s = cmd1.find("NodesLimit value ");
     if ( c1s != std::string::npos ) file_out_name += "_" + cmd1.substr(c1s+17);
+    auto fs = file_out_name.find(" ");
+    if ( fs  != std::string::npos ) file_out_name = file_out_name.substr(0,fs);
     file_out_name += ".txt";
     file_out("Player0: %s\n", cmd0.c_str());
     file_out("Player1: %s\n", cmd1.c_str());
