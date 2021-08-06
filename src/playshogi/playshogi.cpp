@@ -95,11 +95,13 @@ static int get_options(int argc, const char * const *argv) noexcept;
 static void child_out(USIEngine &c, const char *fmt, ...) noexcept;
 static void log_out(USIEngine &c, const char *fmt, ...) noexcept;
 static void close_flush(USIEngine &c) noexcept;
-static void load_book_file() noexcept;
 static void file_out(const char *fmt, ...) noexcept;
 
 constexpr char str_book[]   = "records2016_10818.sfen";
 constexpr uint size_book    = 10831U;
+static string book_file;
+static void load_book_file(string file=str_book) noexcept;
+
 const char *str_go_visit[] = { "go", "go visit" };
 static int go_visit = 0;
 static bool flag_f          = false;
@@ -147,6 +149,7 @@ int main(int argc, char **argv) {
 
   if (get_options(argc, argv) < 0) return 1;
   if (flag_b) load_book_file();
+  if ( !book_file.empty() ) load_book_file(book_file);
 
   if (num_N == 2) {
     seq_s.emplace_back();
@@ -489,8 +492,7 @@ static void node_update(USIEngine &myself, USIEngine &opponent,
   child_out(opponent, startpos.c_str());
   child_out(opponent, str_go_visit[go_visit]); }
 
-static void start_newgame(Game &game, uint nplay, const Color &turn0)
-  noexcept {
+static void start_newgame(Game &game, uint nplay, const Color &turn0) noexcept {
   bool fTurn0Black = (turn0 == SAux::black);
   cout << "'Play #" << nplay << " starts from player"
        << (fTurn0Black ? "0." : "1.") << endl;
@@ -518,7 +520,30 @@ static void start_newgame(Game &game, uint nplay, const Color &turn0)
   child_out(game.engine0, "usinewgame");
   child_out(game.engine1, "usinewgame");
 
-  if (num_d>0) { // hadicap game. drop ky,ka,hi,2mai,4mai,6mai. also change shogibase.cpp node.clear(min_d)
+
+  if ( !book_file.empty() ) {
+    const int KOMAOCHI_BOOK_SIZE = 800;
+    const int KOMAOCHI_BOOK_MOVES = 16;
+    game.startpos = "position " + book[nplay % KOMAOCHI_BOOK_SIZE];
+    int del = 6;
+    if ( game.startpos.find("startpos") != string::npos ) del = 2;
+    std::stringstream ss(book[nplay % KOMAOCHI_BOOK_SIZE]);
+    for (int i = 0; i < KOMAOCHI_BOOK_MOVES + del; ++i) {
+      string token;
+      ss >> token;
+      if (i < del) continue;
+      Action action = game.node.action_interpret(token.c_str(), SAux::usi);
+      if (! action.ok()) die(ERR_INT("Bad book move %s", token.c_str()));
+
+      if (action.is_move()) {
+        if ((game.node.get_len_path() % 8U) == 0) game.record += "\n";
+        else game.record += ",";
+        game.record += game.node.get_turn().to_str();
+        game.record += action.to_str(SAux::csa);
+      }
+      game.node.take_action(action);
+    }
+  } else if (num_d>0) { // hadicap game. drop ky,ka,hi,2mai,4mai,6mai. also change shogibase.cpp node.clear(min_d)
 	string init_pos[HANDICAP_TYPE-1] = {
       "position sfen lnsgkgsn1/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL",// ky
       "position sfen lnsgkgsnl/1r7/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL",	// ka
@@ -529,8 +554,9 @@ static void start_newgame(Game &game, uint nplay, const Color &turn0)
     };
     if (num_d>=HANDICAP_TYPE || !flag_f) die(ERR_INT("Handicap game Err. Must be with 'f'"));
     game.startpos = init_pos[num_d-1] + " w - 1 moves";
-  } else if (flag_f || ! flag_b) game.startpos = "position startpos moves";
-  else {
+  } else if (flag_f || ! flag_b) {
+    game.startpos = "position startpos moves";
+  } else {
     game.startpos = "position " + book[nplay / 2U];
     std::stringstream ss(book[nplay / 2U]);
     for (int i = 0; i < 24 + 2; ++i) {
@@ -541,17 +567,20 @@ static void start_newgame(Game &game, uint nplay, const Color &turn0)
       if (! action.ok()) die(ERR_INT("Bad book move %s", token.c_str()));
 
       if (action.is_move()) {
-	if ((game.node.get_len_path() % 8U) == 0) game.record += "\n";
-	else game.record += ",";
-	game.record += game.node.get_turn().to_str();
-	game.record += action.to_str(SAux::csa); }
-      game.node.take_action(action); } }
-
+        if ((game.node.get_len_path() % 8U) == 0) game.record += "\n";
+        else game.record += ",";
+        game.record += game.node.get_turn().to_str();
+        game.record += action.to_str(SAux::csa);
+      }
+      game.node.take_action(action);
+    }
+  }
   child_out(game.engine0, game.startpos.c_str());
   child_out(game.engine1, game.startpos.c_str());
 
   if (fTurn0Black) child_out(game.engine0, str_go_visit[go_visit]);
-  else             child_out(game.engine1, str_go_visit[go_visit]); }
+  else             child_out(game.engine1, str_go_visit[go_visit]);
+}
 
 static void start_engine(USIEngine &c) noexcept {
   assert(c.ok());
@@ -677,7 +706,7 @@ static int get_options(int argc, const char * const *argv) noexcept {
   uint num;
 
   while (! flag_err) {
-    int opt = Opt::get(argc, argv, "0:1:c:m:d:P:I:B:U:H:W:T:frsubv");
+    int opt = Opt::get(argc, argv, "0:1:c:m:d:P:I:B:U:H:W:T:o:frsubv");
     if (opt < 0) break;
 
     switch (opt) {
@@ -694,6 +723,9 @@ static int get_options(int argc, const char * const *argv) noexcept {
       num_d = strtol(Opt::arg, &endptr, 10);
       if (endptr == Opt::arg || *endptr != '\0'
 	  || num_d >= HANDICAP_TYPE || num_d < 0) flag_err = true;
+      break;
+    case 'o':
+      book_file = string(Opt::arg);
       break;
     case 'm':
       num_m = strtol(Opt::arg, &endptr, 10);
@@ -776,6 +808,7 @@ static int get_options(int argc, const char * const *argv) noexcept {
     cout << "'Book?       " << (flag_b ? "Yes\n" : "No\n");
     cout << "'Parallel:   " << num_P << "\n";
     cout << "'Handicap:   " << num_d << "\n";
+    cout << "'Book file:  " << book_file << "\n";
     for (int i = 0; i < num_N; ++i) {
       cout << "'NNet" << i << ":\n";
       cout << "'- Implimentation " << (int)impl_I[i] << "\n";
@@ -825,6 +858,7 @@ Other options:
   -u       Print verbose USI messages.
   -b       Use positions recorded in records2016_10818.sfen (a collection of
            24 moves from the no-handicap initial position).
+  -o STR   Use positions recorded file. Especially for hadicap opening book.
   -v       use 'go visit' to get aobak 'v=' and searched moves and nodes.
   -d NUM   Handicap Game. NUM = 1(ky), 2(ka), 3(hi), 4(2mai), 5(4mai), 6(6mai)
   -c SHELL Use SHELL, e.g., /bin/csh, instead of /bin/sh.
@@ -853,23 +887,31 @@ Example:
 
   return -1; }
 
-static void load_book_file() noexcept {
-  if (flag_f) die(ERR_INT("Option -f with -b is not supported."));
+static void load_book_file(string file) noexcept {
 
-  std::ifstream ifs(str_book);
-  if (!ifs) die(ERR_INT("Cannot open %s", str_book));
+  std::ifstream ifs(file);
+  if (!ifs) die(ERR_INT("Cannot open %s", file));
 
   string str;
   while (std::getline(ifs, str)) {
-    str.pop_back();
-    str.pop_back();
-    book.push_back(std::move(str)); }
-
-  if (book.size() != size_book) die(ERR_INT("Bad book size %d", book.size()));
+    int n = str.size();
+    if ( n > 0 && (str.at(n-1)=='\r' || str.at(n-1)=='\n') ) str.pop_back();	// delete \r \n
+    n = str.size();
+    if ( n > 0 && (str.at(n-1)=='\r' || str.at(n-1)=='\n') ) str.pop_back();
+//  str.pop_back(); // delete last " "
+    book.push_back(std::move(str));
+  }
+  if ( file == str_book ) {
+	if ( book.size() != size_book ) die(ERR_INT("Bad book size %d", book.size()));
+    if (flag_f) die(ERR_INT("Option -f with -b is not supported."));
+  } else {
+    if (flag_b) die(ERR_INT("Option -b with -o is not supported."));
+    if (!flag_f) die(ERR_INT("-o must be with -f."));
+  }
 
   std::random_device seed_gen;
   auto seed = seed_gen();
   std::mt19937 engine(seed);
   std::shuffle(book.begin(), book.end(), engine);
-  cout << "'Read " << book.size() << " lines from " << str_book << " seed="
-       << seed << std::endl; }
+  cout << "'Read " << book.size() << " lines from " << file << " seed=" << seed << std::endl;
+}

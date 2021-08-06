@@ -1,0 +1,26 @@
+# program name and object files
+PROGRAM = hist
+OBJS = hist.o
+
+# define
+CC = g++
+
+CFLAGS=-c -Wall
+LDFLAGS= -L/usr/local/lib -lm -lpthread -lstdc++
+
+# suffixes rule
+.SUFFIXES: .cpp .o
+
+# target         '$^' ... list of files.
+$(PROGRAM): $(OBJS)
+	$(CC) -o $(PROGRAM) $^ $(LDFLAGS)
+
+# suffixe rule   '$<' ... top file name of list of files.
+.cpp.o:
+	$(CC) $(CFLAGS) -c $<
+
+# delete target
+.PHONY: clean
+clean:
+	$(RM) $(PROGRAM) $(OBJS)
+
