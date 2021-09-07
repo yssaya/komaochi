@@ -60,6 +60,7 @@ void Utils::create_z_table() {
         boost::math::students_t dist(i);
         auto z = boost::math::quantile(boost::math::complement(dist, cfg_ci_alpha));
         z_lookup[i - 1] = z;
+//      myprintf("%4d:z=%f\n",i,z); // 1:z=31830, 7:z=10, 30:z=5, 100:z=4.5, 1000:z=4.3
     }
 }
 

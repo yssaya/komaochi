@@ -22,6 +22,8 @@ typedef struct child {
 	float value;		// win rate (win=+1, loss=0)
 	float bias;			// policy
 	int   exact_value;	// WIN or LOSS or DRAW
+	float squared_eval_diff;	// Variable used for calculating variance of evaluations. for LCB
+	int acc_virtual_loss;		// accumulate virtual loss. for LCB
 //	std::atomic<bool> exact_value;
 } CHILD;
 
