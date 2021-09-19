@@ -2205,7 +2205,7 @@ bool isKLDGainSmall(tree_t * restrict ptree, int sideToMove) {
 	 	if ( phg->games_sum < prev_dist_visits_total_ + KLDGainAverageInterval ) return false;
 	}
 
-	double min_kld = 0;
+	double min_kld;
 	if ( phg->games_sum < 500 ) {
 		min_kld = 0.000001;		// 少ないノード数では厳しい条件の方が強い。総playout数の増加もそれほどなし。
 	} else {
@@ -2234,8 +2234,7 @@ bool isKLDGainSmall(tree_t * restrict ptree, int sideToMove) {
 			}
 		}
 		double x = kldgain / (sum2 - sum1);
-		if ( x < MinimumKLDGainPerNode ) ret = true;
-//		if ( x < min_kld ) ret = true;
+		if ( x < min_kld ) ret = true;
 		PRT("%8d:kldgain=%.7f,%.7f,sum1=%.0f,sum2=%.0f,ret=%d\n",phg->games_sum,kldgain,x,sum1,sum2,ret);
 	}
 	prev_dist_.swap(new_visits);
