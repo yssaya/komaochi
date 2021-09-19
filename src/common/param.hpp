@@ -4,7 +4,7 @@
 namespace Ver {
   constexpr unsigned char major       = 2;	// komaochi >= 2.0
   constexpr unsigned char minor       = 1;
-  constexpr unsigned short usi_engine = 17;	// komaochi >= 16
+  constexpr unsigned short usi_engine = 21;	// komaochi >= 16
 }
 
 #define UNIQUE_NAME ".jBQoNA7kEd"

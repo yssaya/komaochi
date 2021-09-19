@@ -6,6 +6,10 @@ Ubuntu 20.04.2, cuda-11.2, cuDNN 8.1.1, RTX 3090 で動作を確認しています。
 Install OpenCV 4.4.0 and Caffe on Ubuntu 20.04 for Python 3
 https://qengineering.eu/install-caffe-on-ubuntu-20.04-with-opencv-4.4.html
 
+このCaffeはGPUのメモリを2倍以上使います。256x20bのAoba駒落ちだとミニバッチ 128 で
+15803MiB と3090(24GB)の大部分です。GTX 1080, cuda 8.0, cudnn 7.1.3, Caffe 1.0 だと 6143MiB です。
+
+
 xzと開発環境をinstallします。
 
 $ sudo apt install xz-utils liblzma-dev

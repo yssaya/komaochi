@@ -125,7 +125,8 @@ extern unsigned char ailast_one[512];
 //#define BNZ_VER                 "17"	// 20210607 bug fix. does not tend to move 1 ply mate.
 //#define BNZ_VER                 "18"	// 20210608 OpenCL selfcheck off temporarily
 //#define BNZ_VER                 "19"	// 20210622 Windows binary
-#define BNZ_VER                 "20"	// 20210628 softmax temperature > 1.0 is adjusted, even if moves <= 30.
+//#define BNZ_VER                 "20"	// 20210628 softmax temperature > 1.0 is adjusted, even if moves <= 30.
+#define BNZ_VER                 "21"	// 20210919 LCB, kld_gain, reset_root_visit
 #define BNZ_NAME                "AobaKomaochi"
 
 #define REP_MAX_PLY             32

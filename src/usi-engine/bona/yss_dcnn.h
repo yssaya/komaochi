@@ -94,6 +94,8 @@ int get_thread_id(tree_t * restrict ptree);
 bool is_selfplay();
 double get_sigmoid_temperature_from_rate(int rate);
 double get_sel_rand_prob_from_rate(int rate);
+bool isKLDGainSmall(tree_t * restrict ptree, int sideToMove);
+void init_KLDGain_prev_dist_visits_total(int games_sum);
 
 // yss_net.cpp
 void init_network();

@@ -2710,21 +2710,21 @@ void free_zero_db_struct(ZERO_DB *p)
 	std::vector<unsigned short>().swap(p->v_score_x10k);
 }
 
-//const int ZERO_DB_SIZE = 500000;	// 100000,  500000
-const int ZERO_DB_SIZE = 100000;	// 100000,  500000
+const int ZERO_DB_SIZE = 500000;	// 100000,  500000
+//const int ZERO_DB_SIZE = 100000;	// 100000,  500000
 const int MAX_ZERO_MOVES = 513;	// 512手目を後手が指して詰んでなければ。513手目を先手が指せば無条件で引き分け。
 ZERO_DB zdb_one;
 
 ZERO_DB zdb[ZERO_DB_SIZE];
 int *pZDBsum = NULL;
 int zdb_count = 0;
-int zdb_count_start = 0; //430000;	// 400万棋譜から読み込む場合は4000000
+int zdb_count_start = 2100000; //390000;//130000;//460000;//29700000; //18200000;//23400000; //20300000; //18800000; //16400000;	//10300000; //5200000;	// 400万棋譜から読み込む場合は4000000
 int zero_kif_pos_num = 0;
 int zero_kif_games = 0;
 const int MINI_BATCH = 128;	// aoba_zero.prototxt の cross_entroy_scale も同時に変更すること！layerのnameも要変更
 const int ONE_SIZE = DCNN_CHANNELS*B_SIZE*B_SIZE;	// 362*9*9; *4= 117288 *64 = 7506432,  7MBにもなる mini_batch=64
 
-const int fReplayLearning = 1;	// すでに作られた棋譜からWindowをずらせて学習させる
+const int fReplayLearning = 0;	// すでに作られた棋譜からWindowをずらせて学習させる
 const int fWwwSample = 0;		// fReplayLearning も同時に1
 
 
@@ -3080,9 +3080,7 @@ void update_pZDBsum()
 	const int G1000 = 1000*H;
 	const int WR_OK_GAMES = 8000;	// 直近のこの対局数の勝率でレートを変動
 
-	load_handicap_rate();	// 初回のみ読み込む
-
-	// 駒落ちごとに直近のx棋譜、を集めるのは意外と難しい。最大でも10000棋譜程度に。必ず調整が入る数
+	load_handicap_rate();
 	const int MAX_GAMES = (WR_OK_GAMES*12/10)*H;
 	int i;
 	for (i=0;i<H;i++) {
@@ -3140,18 +3138,17 @@ void update_pZDBsum()
 	if ( loop > 0 ) for (i=0;i<H;i++) {
 		if ( mv_recent_inc[i] == 0 ) mv_recent_inc[i] = 1;
 		if ( mv_total_inc[i]  == 0 ) mv_total_inc[i]  = 1;
-		int s_recent=0, s_total=0;
-		for (int j=0;j<3;j++) s_recent += res_recent_sum[i][j];
-		if ( s_recent==0 ) s_recent = 1;
-		for (int j=0;j<3;j++) s_total += res_total_sum[i][j];
-		if ( s_total==0 ) s_total = 1;
+		int s = 0;
+		for (int j=0;j<4;j++) s += res_recent_sum[i][j];
+		if ( s==0 ) s = 1;
 		if ( games_sum[i] == 0 ) games_sum[i] = 1;
+//		PRT("%7d:move_ave=%5.1f(%5.1f) mv_ave=%.1f(%.1f), recent D=%3d,S=%3d,G=%3d(%5.3f) total %3d,%3d,%3d(%5.3f), %d,%d,%d,%d,rt=%d,%d,%d,%d,%d,%d,%d\n",
 		//      手合 対局数  平均手数(最近) 候補数(最近)                                   先宣 後宣(最近)    投 千 GI SI 中断
-		PRT("%7d:%d:%4d,%5.1f(%5.1f) %.1f(%.1f)D=%3d,S=%3d,G=%3d(%5.3f)t=%3d,%3d,%3d(%5.3f)%4d,%4d(%3d,%3d)rt=%d,%d,%d,%d,%d\n",
-			zdb_count,i,games_sum[i],(float)moves_total_sum[i]/games_sum[i], (float)moves_recent_sum[i]/s_recent,
+		PRT("%7d:%d:%4d,%5.1f(%5.1f) %.1f(%.1f)D=%3d,S=%3d,G=%3d(%5.3f)t=%4d,%5d,%5d(%5.3f)%4d,%4d(%3d,%3d)rt=%3d,%2d,%d,%d,%d\n",
+			zdb_count,i,games_sum[i],(float)moves_total_sum[i]/games_sum[i], (float)moves_recent_sum[i]/s,
 			(float)mv_total_sum[i]/mv_total_inc[i], (float)mv_recent_sum[i]/mv_recent_inc[i],
-			res_recent_sum[i][0],res_recent_sum[i][1],res_recent_sum[i][2], (float)(res_recent_sum[i][1] + res_recent_sum[i][0]/2.0)/s_recent,
- 			res_total_sum[i][0],res_total_sum[i][1],res_total_sum[i][2], (float)(res_total_sum[i][1] + res_total_sum[i][0]/2.0)/s_total,
+			res_recent_sum[i][0],res_recent_sum[i][1],res_recent_sum[i][2], (float)(res_recent_sum[i][1] + res_recent_sum[i][0]/2.0)/(res_recent_sum[i][0]+res_recent_sum[i][1]+res_recent_sum[i][2]),
+ 			res_total_sum[i][0],res_total_sum[i][1],res_total_sum[i][2], (float)(res_total_sum[i][1] + res_total_sum[i][0]/2.0)/(res_total_sum[i][0]+res_total_sum[i][1]+res_total_sum[i][2]),
  			kachi[i][1],kachi[i][2],res_kind[i][1],res_kind[i][2],
 			res_type[i][1],res_type[i][3],res_type[i][4],res_type[i][5],res_type[i][6] );
 	}
@@ -3629,7 +3626,7 @@ void shogi::prepare_kif_db(int fPW, int mini_batch, float *data, float *label_po
 		// 実際の勝敗と探索値の平均を学習。https://tadaoyamaoka.hatenablog.com/entry/2018/07/01/121411
 		float ave_r = ((float)win_r + score) / 2.0;
 		if ( score_x10k == NO_ROOT_SCORE ) ave_r = win_r;
-//		ave_r = win_r;	// not use average
+		ave_r = win_r;	// not use average
 //		PRT("(%.3f,%.3f)",(float)win_r,score);
 
 		int playmove_id = 0;
@@ -3690,7 +3687,7 @@ void shogi::prepare_kif_db(int fPW, int mini_batch, float *data, float *label_po
 		if ( fSymmetry ) {
 			symmetry_dcnn_channels(pd);
 		}
-	
+
 		sum_handicap[p->handicap]++;
 		sum_result[p->result]++;
 		sum_turn[bGoteTurn]++;
@@ -3964,13 +3961,15 @@ void start_zero_train(int *p_argc, char ***p_argv )
 
 	//評価用のデータを取得
 	const auto net      = solver->net();
-//	const char sNet[] = "20190419replay_lr001_wd00002_100000_1018000/_iter_36000.caffemodel";	// w449
-//	const char sNet[] = "/home/yss/shogi/learn/snapshots/_iter_4000.caffemodel";	// w2749
-//	const char sNet[] = "/home/yss/shogi/learn/snapshots/_iter_30000.caffemodel"; 
-        
-	int next_weight_number = 5;	// 現在の最新の番号 +1
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210604/_iter_10000.caffemodel";	// w0001
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210607/_iter_60000.caffemodel";
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210610/_iter_90000.caffemodel";
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210615_lr0001/_iter_400000.caffemodel";
+	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210722_lr0001/_iter_1730000.caffemodel";	// w213
 
-//	net->CopyTrainedLayersFrom(sNet);	// caffemodelを読み込んで学習を再開する場合
+	int next_weight_number = 214;	// 現在の最新の番号 +1
+
+	net->CopyTrainedLayersFrom(sNet);	// caffemodelを読み込んで学習を再開する場合
 //	load_aoba_txt_weight( net, "/home/yss/w000000000689.txt" );	// 既存のw*.txtを読み込む。*.caffemodelを何か読み込んだ後に
 	LOG(INFO) << "Solving ";
 	PRT("fReplayLearning=%d\n",fReplayLearning);
@@ -3992,8 +3991,8 @@ wait_again:
 //		if ( iteration > 1000 ) solver_param.set_base_lr(0.01);
 
 	} else {
-		if ( 0 && iteration==0 && next_weight_number==1 ) {
-			add = 10000;	// 初回のみダミーで10000棋譜追加したことにする
+		if ( 1 && iteration==0 && next_weight_number==214 ) {
+			add = 3000;	// 初回のみダミーで10000棋譜追加したことにする
 		} else {
 			add = PS->wait_and_get_new_kif(next_weight_number);
 		}
