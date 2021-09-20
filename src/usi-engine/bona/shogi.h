@@ -127,7 +127,8 @@ extern unsigned char ailast_one[512];
 //#define BNZ_VER                 "19"	// 20210622 Windows binary
 //#define BNZ_VER                 "20"	// 20210628 softmax temperature > 1.0 is adjusted, even if moves <= 30.
 //#define BNZ_VER                 "21"	// 20210919 LCB, kld_gain, reset_root_visit
-#define BNZ_VER                 "22"	// 20210920 fDiffRootVisit
+//#define BNZ_VER                 "22"	// 20210920 fDiffRootVisit
+#define BNZ_VER                 "23"	// 20210920 no change. autousi uses kldgain.
 #define BNZ_NAME                "AobaKomaochi"
 
 #define REP_MAX_PLY             32

@@ -241,11 +241,6 @@ public:
     argv[argc++] = opt_r;
     argv[argc++] = opt_r_value;
 
-    char opt_p[]       = "-p";
-    char opt_p_value[] = "800";
-    argv[argc++] = opt_p;
-    argv[argc++] = opt_p_value;
-
     char opt_n[] = "-n";
     argv[argc++] = opt_n;
 
@@ -253,6 +248,24 @@ public:
     char opt_m_value[] = "30";
     argv[argc++] = opt_m;
     argv[argc++] = opt_m_value;
+
+#if 0	// normal
+    char opt_p[]       = "-p";
+    char opt_p_value[] = "800";
+    argv[argc++] = opt_p;
+    argv[argc++] = opt_p_value;
+#else
+    char opt_p[]       = "-p";
+    char opt_p_value[] = "3200";
+    argv[argc++] = opt_p;
+    argv[argc++] = opt_p_value;
+
+    char opt_kld[]       = "-kldgain";
+    char opt_kld_value[] = "0.000002";
+    argv[argc++] = opt_kld;
+    argv[argc++] = opt_kld_value;
+#endif
+
 #if 0	// make first random 100000 games.
     char opt_nn_rand[] = "-nn_rand";
     argv[argc++] = opt_nn_rand;
