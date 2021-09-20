@@ -1369,6 +1369,7 @@ int get_packmove_from_2187_policy(tree_t * restrict ptree, int sideToMove, int z
 // 移動先、とその位置に来る方向(8+2)、成(8+2)、駒打ち、で 9x9 * (10 + 10 + 7) = 81*27 = 2187 通りで一意に決まる
 // https://tadaoyamaoka.hatenablog.com/entry/2017/05/07/155418
 // 盤外からの移動や、打てない駒、4段目以上での下から以外の移動での成、を削除すると 1600? 通り。指し手の最大が593だから半分近い！
+// 1496通り、らしいです。https://tokumini.hatenablog.com/entry/2021/09/19/160000
 int get_dlshogi_policy_id(int bz, int az, int tk, int nf) {
 	int fDrop = 0;
 	int fNari = (nf!=0);

@@ -32,6 +32,10 @@ bin/playshogi -frsm 800 -d 4 -0 "bin/aobaz -p 400 -msafe 30 -w w1525.txt" -1 "bi
 GPU 0 のみを用いて w70 と w62 を対戦。
 bin/playshogi -rsbm 800 -c /bin/bash -U 0:0 -B 7:7 -P 25 -H 1:1 -W w70.txt:w62.txt -0 "bin/aobak -e 0 -p 30 -w w70.txt" -1 "bin/aobak -e 1 -p 30 -w w62.txt" >> w0070_vs_w0062_p30.csa
 
+GPU 0 のみを用いて w70同士を対戦。6枚落ちの定跡集を利用。上手は1手800p、下手は1手1p
+bin/playshogi -frsm 800 -d 6 -o opening/20210805_6mai.sfen -P 18 -B 7 -H 1 -W ~/w70.txt -c /bin/bash -0 "bin/aobak -p 1 -e 0 -w ~/w70.txt" -1 "bin/aobak -p 800 -e 0 -w ~/w70.txt" >> 6mai_w70_1p_vs_w70_800p.csa
+
+
 
 ※ 注意
 ubuntu 16だと "-c /bin/bash" を付けないとAobaZeroのプロセス間バッチは動作しません。

@@ -48,6 +48,7 @@ int fUsiInfo = 0;
 bool fLCB = false;
 double MinimumKLDGainPerNode = 0;	//0.000002;	0で無効, lc0は 0.000005
 bool fResetRootVisit = false;
+bool fDiffRootVisit = false;
 
 int nLimitUctLoop = 100;
 double dLimitSec = 0;
@@ -829,6 +830,10 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 	HASH_SHOGI *phg = HashShogiReadLock(ptree, sideToMove);
 	create_node(ptree, sideToMove, ply, phg);
 	UnLock(phg->entry_lock);
+	int keep_root_games[MAX_LEGAL_MOVES];
+	if ( fDiffRootVisit ) {
+		for (int i=0; i<phg->child_num; i++) keep_root_games[i] = phg->child[i].games;
+	}
 	if ( fResetRootVisit ) {
 		for (int i=0; i<phg->child_num; i++) phg->child[i].games = 0;
 	}
@@ -876,13 +881,12 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 	int best_move = 0;
 	int max_i = -1;
 	int max_games = 0;
-	int sum_games = 0;
 	const int SORT_MAX = MAX_LEGAL_MOVES;	// 593
 	int sort_n = 0;
 	bool found_mate = false;
 	const float LARGE_NEGATIVE_VALUE = -1e6f;
 	float max_lcb = LARGE_NEGATIVE_VALUE;
-	typedef struct SORT_LCB {
+	typedef struct SORT_LCB {	// LCBを使わなくてもいったん代入
 		int   move;
 		int   games;
 		float lcb;
@@ -896,7 +900,6 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 		if ( pc->games == 0 ) DEBUG_PRT("");
 		max_games = pc->games;
 		max_i = i;
-		sum_games += pc->games;
 
 		SORT_LCB *p = &sort_lcb[sort_n];
 		p->move  = pc->move;
@@ -934,7 +937,6 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 				max_i = i;
 			}
 		}
-		sum_games += pc->games;
 		if ( pc->games ) {
 			if ( sort_n >= SORT_MAX ) DEBUG_PRT("");
 			SORT_LCB *p = &sort_lcb[sort_n];
@@ -955,6 +957,15 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 //		if ( v < 5 ) { PRT("resign threshold. 5%%\n"); best_move = 0; }
 		char *pv_str = prt_pv_from_hash(ptree, ply, sideToMove, PV_CSA); PRT("%s\n",pv_str);
 	}
+
+	if ( fDiffRootVisit ) {
+		for (int i=0; i<phg->child_num; i++) {
+			sort_lcb[i].games -= keep_root_games[i];
+			if ( sort_lcb[i].games < 0 ) DEBUG_PRT("");
+		}
+	}
+	int sum_games = 0;
+	for (i=0; i<phg->child_num; i++) sum_games += sort_lcb[i].games;
 
 	for (i=0; i<sort_n-1; i++) {
 		int max_i = i;
@@ -1707,6 +1718,11 @@ int getCmdLineParam(int argc, char *argv[])
 		if ( strstr(p,"-reset_root_visit") ) {
 			fResetRootVisit = true;
 			PRT("fResetRootVisit=%d\n",fResetRootVisit);
+			continue;
+		}
+		if ( strstr(p,"-diff_root_visit") ) {
+			fDiffRootVisit = true;
+			PRT("fDiffRootVisit=%d\n",fDiffRootVisit);
 			continue;
 		}
 #ifdef USE_OPENCL
