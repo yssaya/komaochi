@@ -3,7 +3,7 @@
 #pragma once
 namespace Ver {
   constexpr unsigned char major       = 2;	// komaochi >= 2.0
-  constexpr unsigned char minor       = 2;	// 2...kldgain
+  constexpr unsigned char minor       = 3;	// 2...kldgain, 3...kld bufix
   constexpr unsigned short usi_engine = 24;	// komaochi >= 16
 }
 
