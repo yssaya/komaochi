@@ -959,13 +959,13 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 	}
 
 	if ( fDiffRootVisit ) {
-		for (int i=0; i<phg->child_num; i++) {
-			sort_lcb[i].games -= keep_root_games[i];
-			if ( sort_lcb[i].games < 0 ) DEBUG_PRT("");
-		}
+//		for (int i=0; i<phg->child_num; i++) {
+//			sort_lcb[i].games -= keep_root_games[i];	// 1対1の対応でない
+//			if ( sort_lcb[i].games < 0 ) DEBUG_PRT("");
+//		}
 	}
 	int sum_games = 0;
-	for (i=0; i<phg->child_num; i++) sum_games += sort_lcb[i].games;
+	for (i=0; i<sort_n; i++) sum_games += sort_lcb[i].games;
 
 	for (i=0; i<sort_n-1; i++) {
 		int max_i = i;

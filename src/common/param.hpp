@@ -4,10 +4,10 @@
 namespace Ver {
   constexpr unsigned char major       = 2;	// komaochi >= 2.0
   constexpr unsigned char minor       = 2;	// 2...kldgain
-  constexpr unsigned short usi_engine = 21;	// komaochi >= 16
+  constexpr unsigned short usi_engine = 23;	// komaochi >= 16
 }
 
-#define UNIQUE_NAME ".jBQoNA7kEd"
+#define AOBA_UNIQUE ".jBQoNA7kEd"
 
 namespace Param {
   using uint = unsigned int;
@@ -16,12 +16,12 @@ namespace Param {
   constexpr uint maxlen_play          = 4096U;
   // 81*81*2 + (81*7) = 13122 + 567 = 13689 * 512 = 7008768
   constexpr uint len_seq_prn          = 7008768U;
-//constexpr char name_autousi[]       = "/tmp/autousi"   UNIQUE_NAME;
-  constexpr char name_server[]        = "/tmp/server"    UNIQUE_NAME;
-  constexpr char name_sem_nnet[]      = "/sem-nnet"      UNIQUE_NAME;
-  constexpr char name_sem_lock_nnet[] = "/sem-lock-nnet" UNIQUE_NAME;
-  constexpr char name_seq_prn[]       = "/mmap-seq-prn"  UNIQUE_NAME;
-  constexpr char name_mmap_nnet[]     = "/mmap-nnet"     UNIQUE_NAME;
+//constexpr char name_autousi[]       = "/tmp/autousi"   AOBA_UNIQUE;
+  constexpr char name_server[]        = "/tmp/server"    AOBA_UNIQUE;
+  constexpr char name_sem_nnet[]      = "/sem-nnet"      AOBA_UNIQUE;
+  constexpr char name_sem_lock_nnet[] = "/sem-lock-nnet" AOBA_UNIQUE;
+  constexpr char name_seq_prn[]       = "/mmap-seq-prn"  AOBA_UNIQUE;
+  constexpr char name_mmap_nnet[]     = "/mmap-nnet"     AOBA_UNIQUE;
 }
 
 const int HEADER_SIZE = 64;	// version 2 byte(major,minor), resign_th(2 byte), handicap rate 14 byte (2*7)
