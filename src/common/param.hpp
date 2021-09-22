@@ -4,7 +4,7 @@
 namespace Ver {
   constexpr unsigned char major       = 2;	// komaochi >= 2.0
   constexpr unsigned char minor       = 2;	// 2...kldgain
-  constexpr unsigned short usi_engine = 23;	// komaochi >= 16
+  constexpr unsigned short usi_engine = 24;	// komaochi >= 16
 }
 
 #define AOBA_UNIQUE ".jBQoNA7kEd"
