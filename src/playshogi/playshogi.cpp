@@ -524,10 +524,13 @@ static void start_newgame(Game &game, uint nplay, const Color &turn0) noexcept {
   if ( !book_file.empty() ) {
     const int KOMAOCHI_BOOK_SIZE = 800;
     const int KOMAOCHI_BOOK_MOVES = 16;
-    game.startpos = "position " + book[nplay % KOMAOCHI_BOOK_SIZE];
+    int n = nplay;
+    if ( num_d==0 && !flag_f ) n = n / 2;
+    int book_i = n % KOMAOCHI_BOOK_SIZE;
+    game.startpos = "position " + book[book_i];
     int del = 6;
     if ( game.startpos.find("startpos") != string::npos ) del = 2;
-    std::stringstream ss(book[nplay % KOMAOCHI_BOOK_SIZE]);
+    std::stringstream ss(book[book_i]);
     for (int i = 0; i < KOMAOCHI_BOOK_MOVES + del; ++i) {
       string token;
       ss >> token;
@@ -906,7 +909,7 @@ static void load_book_file(string file) noexcept {
     if (flag_f) die(ERR_INT("Option -f with -b is not supported."));
   } else {
     if (flag_b) die(ERR_INT("Option -b with -o is not supported."));
-    if (!flag_f) die(ERR_INT("-o must be with -f."));
+    if (!flag_f && num_d!=0 ) die(ERR_INT("-o must be with -f."));
   }
 
   std::random_device seed_gen;
