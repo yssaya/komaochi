@@ -834,7 +834,7 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 	if ( fResetRootVisit ) {
 		for (int i=0; i<phg->child_num; i++) phg->child[i].games = 0;
 	}
-	const bool fPolicyRealization = false
+	const bool fPolicyRealization = false;
 	float keep_root_policy[MAX_LEGAL_MOVES];
 	if ( fPolicyRealization ) {
 		for (int i=0; i<phg->child_num; i++) keep_root_policy[i] = phg->child[i].bias;
