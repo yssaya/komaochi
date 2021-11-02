@@ -3,8 +3,8 @@
 #pragma once
 namespace Ver {
   constexpr unsigned char major       = 2;	// komaochi >= 2.0
-  constexpr unsigned char minor       = 3;	// 2...kldgain, 3...kld bufix
-  constexpr unsigned short usi_engine = 24;	// komaochi >= 16
+  constexpr unsigned char minor       = 4;	// 2...kldgain, 3...kld bufix, mtemp 1.3
+  constexpr unsigned short usi_engine = 25;	// komaochi >= 16
 }
 
 #define AOBA_UNIQUE ".jBQoNA7kEd"

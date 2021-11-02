@@ -230,7 +230,6 @@ float f_rnd()
 {
 //	double f = (double)rand_m521() / (0xffffffffUL + 1.0);	// 0 <= rnd() <  1, ULONG_MAX は gcc 64bitで違う
 	double f = (double)rand_m521() / (0xffffffffUL + 0.0);	// 0 <= rnd() <= 1
-//	double f = (double)(rand_m521()&0xff) / (0xffUL + 0.0);	// 0 <= rnd() <= 1
 //	PRT("f_rnd()=%f\n",f);
 	return (float)f;
 }
@@ -469,8 +468,6 @@ void hash_shogi_table_clear()
 {
 	Hash_Shogi_Mask       = Hash_Shogi_Table_Size - 1;
 	HASH_ALLOC_SIZE size = sizeof(HASH_SHOGI) * Hash_Shogi_Table_Size;
-//	if ( hash_shogi_table == NULL ) hash_shogi_table = (HASH_SHOGI*)malloc( size );
-//	if ( hash_shogi_table == NULL ) { PRT("Fail malloc hash_shogi\n"); debug(); }
 	hash_shogi_table.resize(Hash_Shogi_Table_Size);	// reserve()だと全要素のコンストラクタが走らないのでダメ
 	PRT("HashShogi=%7d(%3dMB),sizeof(HASH_SHOGI)=%d,Hash_SHOGI_Mask=%d\n",Hash_Shogi_Table_Size,(int)(size/(1024*1024)),sizeof(HASH_SHOGI),Hash_Shogi_Mask);
 	hash_shogi_table_reset();
@@ -830,12 +827,17 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 	HASH_SHOGI *phg = HashShogiReadLock(ptree, sideToMove);
 	create_node(ptree, sideToMove, ply, phg);
 	UnLock(phg->entry_lock);
-	int keep_root_games[MAX_LEGAL_MOVES];
+//	int keep_root_games[MAX_LEGAL_MOVES];
 	if ( fDiffRootVisit ) {
-		for (int i=0; i<phg->child_num; i++) keep_root_games[i] = phg->child[i].games;
+//		for (int i=0; i<phg->child_num; i++) keep_root_games[i] = phg->child[i].games;
 	}
 	if ( fResetRootVisit ) {
 		for (int i=0; i<phg->child_num; i++) phg->child[i].games = 0;
+	}
+	const bool fPolicyRealization = true;
+	float keep_root_policy[MAX_LEGAL_MOVES];
+	if ( fPolicyRealization ) {
+		for (int i=0; i<phg->child_num; i++) keep_root_policy[i] = phg->child[i].bias;
 	}
 
 	const float epsilon = 0.25f;	// epsilon = 0.25
@@ -1082,7 +1084,8 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 
 		if ( select_index < 0 || i==sort_n ) DEBUG_PRT("Err. nVisitCount not found.\n");
 
-		CHILD *pc  = &phg->child[sort_lcb[select_index].index];	// LCB適用前の手
+		int org_index = sort_lcb[select_index].index;	// LCB適用前の手
+		CHILD *pc  = &phg->child[org_index];
 		bool fSwap = true;
 		if ( nVisitCountSafe && max_i >= 0 ) {	// 勝率がそれほど下がらず、ある程度の回数試した手だけを選ぶ
 			CHILD *pbest = &phg->child[max_i];
@@ -1092,6 +1095,29 @@ int uct_search_start(tree_t * restrict ptree, int sideToMove, int ply, char *buf
 		if ( fSwap ) {
 			best_move = sort_lcb[select_index].move;
 			PRT("rand select:%s,%3d,%6.3f,bias=%6.3f,r=%d/%d,softmax_temp=%.3f(rate=%d),select_rand_prob=%.3f\n",str_CSA_move(pc->move),pc->games,pc->value,pc->bias,r,sum_games,softmax_temp,rate,select_rand_prob);
+		}
+		if ( fPolicyRealization && ptree->nrep < 30 ) {
+			static int games = 0;
+			static int prev_nrep = +999;
+			static double realization_prob = 1;	// 単純に掛けると非常に小さい数になる。FLT_MIN = 1.175494e-38, DBL_MIN = 2.225074e-308
+			static double realization_log  = 0;
+			static double realization_log_sum = 0;
+			if ( ptree->nrep < prev_nrep ) {
+				games++;
+				realization_log_sum += realization_log;
+				realization_prob = 1;
+				realization_log  = 0;
+			}
+			prev_nrep = ptree->nrep;
+
+			double b = keep_root_policy[org_index];
+			realization_prob *= b;
+			realization_log  += log(b);	// logを取って足す
+			FILE *fp = fopen("policy_dist.log","a");
+			if ( fp ) {
+				fprintf(fp,"%7d:%4d:%2d,%7s,b=%10.7f(%10.7f),prob=%12g,log=%12f(%12f)\n",getpid_YSS(),games,ptree->nrep,str_CSA_move(best_move),b,phg->child[org_index].bias, realization_prob, realization_log,(float)realization_log_sum/(games-1+(games==1)));
+				fclose(fp);
+			}
 		}
 	}
 	if ( select_rand_prob > 0 && phg->child_num > 0 ) {

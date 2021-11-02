@@ -248,6 +248,12 @@ public:
     char opt_m_value[] = "30";
     argv[argc++] = opt_m;
     argv[argc++] = opt_m_value;
+#if 1
+    char opt_mtemp[]       = "-mtemp";
+    char opt_mtemp_value[] = "1.3";
+    argv[argc++] = opt_mtemp;
+    argv[argc++] = opt_mtemp_value;
+#endif
 
 #if 0	// normal
     char opt_p[]       = "-p";
