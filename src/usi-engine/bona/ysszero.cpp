@@ -63,6 +63,7 @@ double dAutoResignWinrate = 0;
 double dSelectRandom = 0;			// この確率で乱数で選んだ手を指す 0 <= x <= 1.0。0 でなし無効
 int nHandicapRate[HANDICAP_TYPE];
 const int TEMP_RATE_MAX = 1400;		// このレート差まではsoftmaxの温度で調整
+char engine_name[SIZE_CMDLINE];
 
 std::vector <HASH_SHOGI> hash_shogi_table;
 const int HASH_SHOGI_TABLE_SIZE_MIN = 1024*4*4;
@@ -1749,6 +1750,11 @@ int getCmdLineParam(int argc, char *argv[])
 		if ( strstr(p,"-diff_root_visit") ) {
 			fDiffRootVisit = true;
 			PRT("fDiffRootVisit=%d\n",fDiffRootVisit);
+			continue;
+		}
+		if ( strstr(p,"-name") ) {
+			strcpy(engine_name, q);
+			PRT("name=%s\n",q);
 			continue;
 		}
 #ifdef USE_OPENCL

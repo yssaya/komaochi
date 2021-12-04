@@ -430,7 +430,7 @@ static int CONV proce_usi( tree_t * restrict ptree )
 
   if ( ! strcmp( token, "usi" ) )
     {
-      USIOut( "id name %s\n", str_myname );
+      USIOut( "id name %s\n", engine_name );
       USIOut( "id author Hiroshi Yamashita\n" );
       USIOut( "id settings %s\n", get_cmd_line_ptr() );
       USIOut( "usiok\n" );
@@ -439,7 +439,7 @@ static int CONV proce_usi( tree_t * restrict ptree )
 
   if ( ! strcmp( token, "isready" ) )
     {
-      USIOut( "readyok\n", str_myname );
+      USIOut( "readyok\n" );
       return 1;
     }
 
