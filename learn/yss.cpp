@@ -172,7 +172,7 @@ int GetSystemMemoryMB()
 
 const char *get_kdbDirSL() { return ""; }	// NULLではない。長さが0の文字列の先頭アドレスを返す
 
-int get_learning_dir_number() { PRT("must be programmed!\n"); debug(); return 0; }
+int get_learning_dir_number() { DEBUG_PRT("must be programmed!\n"); return 0; }
 
 int change_dir(const char* /* sDir */) { return 0; }
 void return_dir() {}
@@ -289,7 +289,7 @@ int get_next_file_from_dirs(char *filename, const char *ext, const char *dir_lis
 				return 0;
 			}
 			if ( change_dir(p_current_dir) == 0 ) {
-				PRT("fail change dir=%s\n",p_current_dir); debug();
+				DEBUG_PRT("fail change dir=%s\n",p_current_dir);
 			}
 		}
 
@@ -385,7 +385,7 @@ int PRT(const char *fmt, ...)	// printf() の書式文字列は const
 #else
 	if ( len < 0 || len >= PRT_LEN_MAX ) {
 		PRT_sub("PRT len over!\n");
-		debug();
+		DEBUG_PRT("PRT len over!");
 	}
 	PRT_sub("%s",text);	// PRT(text) だとtext="%CHUDAN"が"HUDAN"になってしまう。
 #endif
@@ -434,6 +434,7 @@ void debug_print(const char *fmt, ... )
 	va_end(ap);
 	static char text_out[TMP_BUF_LEN*2];
 	sprintf(text_out,"%s%s",debug_str,text);
+	PRT_ON();
 	PRT("%s\n",text_out);
 	debug();
 }
@@ -456,7 +457,7 @@ int shogi::kifu_set_move(int bz,int az,int tk,int nf, int t)
 //	char retp[20];
 //	change(bz,az,tk,nf,retp);
 //	PRT("%s, bz,az,tk,nf = %x,%x,%x,%x\n",retp,bz,az,tk,nf);
-	if ( tesuu >= KIFU_MAX-1 ) { PRT("KIFU_MAX Err\n"); debug(); }
+	if ( tesuu >= KIFU_MAX-1 ) { DEBUG_PRT("KIFU_MAX Err\n"); }
 	move_hit(bz,az,tk,nf);
 	tesuu++; all_tesuu = tesuu;
 	kifu[tesuu][0] = bz;
@@ -894,6 +895,7 @@ int shogi::LoadCSA()
 	char c;
 	int prt_flag = 1;
 	int fShortCSA = 0;	// 盤面を座標で指定する詰将棋用
+	char sIndex[256];
 
 	tesuu = 0;
 	hirate_ban_init(KomaOti);		// 盤面の初期化　平手の状態へ
@@ -935,7 +937,7 @@ int shogi::LoadCSA()
 			// 駒落ち判定
 			ZERO_DB *pz = &zdb_one;
 			pz->handicap = get_handicap_from_board();
-			if ( pz->handicap && fGotekara==0 ) DEBUG_PRT("");
+			if ( pz->handicap && fGotekara==0 ) DEBUG_PRT("pz->handiacp=%d\n",pz->handicap);
 		}
 
 		// csa形式のコメントを取り込む
@@ -945,6 +947,7 @@ int shogi::LoadCSA()
 //			for (i=0;i<n;i++) PRT("%c",lpLine[i]);
 			if ( tesuu == 0 ) {
 				if ( strncmp(lpLine,"'no",3)==0 ) {
+					strncpy(sIndex,lpLine,255);
 				}
 				if ( strncmp(lpLine,"'w ",3)==0 ) {
 					char *p = strchr(lpLine,',');
@@ -972,7 +975,7 @@ int shogi::LoadCSA()
 					char str[10];
 					int n = 0;
 					for (;;) {
-						if ( n>=10 ) { PRT("Err csa move str >= 10.\n"); debug(); }
+						if ( n>=10 ) { DEBUG_PRT("Err csa move str >= %d,w=%d,%s\n",n,pz->weight_n,sIndex); }
 						c = *p++;
 						str[n++] = c;
 						if ( c==',' || c=='\r' || c =='\n' || c==0 ) break;
@@ -1287,7 +1290,7 @@ void shogi::LoadShotest(void)
 				char *pdest;
 
 				pdest = strchr( drop_shotest, c );
-				if ( pdest == NULL ) { PRT("持ち駒発見ミス shotest\n"); debug(); }
+				if ( pdest == NULL ) { DEBUG_PRT("持ち駒発見ミス shotest\n"); }
 				i = pdest - drop_shotest + 1;
 			}
 			tk = i + (0x80)*(tesuu&1);
@@ -1384,7 +1387,7 @@ void shogi::LoadTextBan()
 			for (i=1;i<8;i++) {
 				sprintf(find,"%s",koma_kanji[i+16]);
 				char *q = strstr(p+2*9,find);
-				if ( q==NULL) { PRT("not found 駒\n"); debug(); }
+				if ( q==NULL) { DEBUG_PRT("not found 駒\n"); }
 				mo_c[i] = *(q+3) - '0';
 			}
 		}

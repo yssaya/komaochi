@@ -44,7 +44,7 @@ void shogi::check_kn(void)
 			PRT("check_kn(%x) Error !!! tesuu=%d fukasa=%d\n",i,tesuu,fukasa);
 			PRT("ban[%x]=%02x, init_b[%x]=%x\n",z,ban[z],z,init_ban[z]);
 			print_kb();
-			debug();
+			DEBUG_PRT("");
 		}
 	}
 	for (i=1;i<8;i++) {
@@ -52,7 +52,7 @@ void shogi::check_kn(void)
 		if ( mo_c[i]<0 || mo_m[i]<0 || k < 0 || (i==1 && k>18) ||
 		 ( (i==2||i==3||i==4||i==5) && k>4 ) || ( (i==6||i==7) && k>2 ) ) {
 			PRT("mo_ Error !\n");
-			debug();
+			DEBUG_PRT("");
 		}
 	}
 }
@@ -330,13 +330,13 @@ int get_localtime(int *year, int *month, int *day, int *week, int *hour, int *mi
 int get_clock()
 {
 #if defined(_MSC_VER)
-	if ( CLOCKS_PER_SEC_MS != CLOCKS_PER_SEC ) { PRT("CLOCKS_PER_SEC=%d Err. not Windows OS?\n"); debug(); }
+	if ( CLOCKS_PER_SEC_MS != CLOCKS_PER_SEC ) { PRT("CLOCKS_PER_SEC=%d Err. not Windows OS?\n"); DEBUG_PRT(""); }
 	return clock();
 //	return GetTickCount();
 #else
 	struct timeval  val;
 	struct timezone zone;
-	if ( gettimeofday( &val, &zone ) == -1 ) { PRT("time err\n"); debug(); }
+	if ( gettimeofday( &val, &zone ) == -1 ) { PRT("time err\n"); DEBUG_PRT(""); }
 //	return tv.tv_sec + (double)tv.tv_usec*1e-6;
 	return val.tv_sec*1000 + (val.tv_usec / 1000);
 #endif
@@ -1355,7 +1355,7 @@ const char *koma_kanji_str(int n)
 	  "  "," ‚",  "π·",  "∑À",  "∂‰","∂‚","≥—","»Ù",
 	  "∂Ã","§»","¿Æπ·","¿Æ∑À","¿Æ∂‰","  ","«œ","Œ∂"
 	};
-	if ( n < 0 || n >= 16 ) debug();
+	if ( n < 0 || n >= 16 ) DEBUG_PRT("");
 	return koma_kanji2[n];
 }
 
@@ -1414,7 +1414,7 @@ void shogi::change_small(int bz,int az,int tk,int nf,char retp[])
 		sprintf(retp,"PASS    ");
 		return;	
 	}
-	if ( bz < 0 || bz > 0xff || az <= 0 || az > 0x99 || nf < 0 || nf > 0x08 || tk < 0 || tk > 0x8f ) { PRT("Err bz,az,tk,nf=%02x,%02x,%02x,%02x\n",bz,az,tk,nf); debug(); }
+	if ( bz < 0 || bz > 0xff || az <= 0 || az > 0x99 || nf < 0 || nf > 0x08 || tk < 0 || tk > 0x8f ) { DEBUG_PRT("Err bz,az,tk,nf=%02x,%02x,%02x,%02x\n",bz,az,tk,nf); }
 
 	ay = az/16;
 	ax = 10-(az-ay*16);
@@ -1455,7 +1455,7 @@ void shogi::change_sg(int bz,int az,int tk,int nf,int depth, char retp[])
 		strcat(retp,"PASS");
 		return;	
 	}
-	if ( bz < 0 || bz > 0xff || az <= 0 || az > 0x99 || nf < 0 || nf > 0x08 || tk < 0 || tk > 0x8f ) { PRT("Err sg bz,az,tk,nf=%02x,%02x,%02x,%02x\n",bz,az,tk,nf); debug(); }
+	if ( bz < 0 || bz > 0xff || az <= 0 || az > 0x99 || nf < 0 || nf > 0x08 || tk < 0 || tk > 0x8f ) { DEBUG_PRT("Err sg bz,az,tk,nf=%02x,%02x,%02x,%02x\n",bz,az,tk,nf); }
 
 	ay = az/16;
 	ax = 10-(az-ay*16);

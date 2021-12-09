@@ -386,7 +386,7 @@ char *find_next_file(char *sDir, const char *sExt)
 
 	if ( dir == NULL ) {
 		dir = opendir(sDir);
-		if ( dir == NULL ) { PRT("fail opendir() %s\n",sDir); debug(); }
+		if ( dir == NULL ) { DEBUG_PRT("fail opendir() %s\n",sDir); }
 		strcpy(dir_name, sDir);
 	}
 
@@ -463,7 +463,7 @@ int get_one_v_file(char *filename, const char *dir_list[])
 			const char *sDir = dir_v_sgf_list[dir_v_sgf_n];
 			if ( sDir == NULL ) { PRT("done...sum_dir=%d,all_files=%d\n",sum_dir,all_files); return -1; }
 			dir_num = scandir(sDir, &namelist, NULL, NULL);
-			if ( dir_num < 0 || namelist==NULL ) { PRT("Err scandir\n"); debug(); }
+			if ( dir_num < 0 || namelist==NULL ) { DEBUG_PRT("Err scandir\n"); }
 		}
 		if ( dir_i >= dir_num ) {
 			dir_num = 0;
@@ -510,11 +510,11 @@ void shuffle_prt(int *p_stock_num)
 		const char sLabel[] = "/home/yss/yssfish/value/label_tmp.txt";
 		static int fFirst = 1;
 		if ( fFirst ) {
-			if ( fopen(sLabel,"r")!=NULL ) { PRT("Err %s exist!!!\n",sLabel); debug(); }
+			if ( fopen(sLabel,"r")!=NULL ) { DEBUG_PRT("Err %s exist!!!\n",sLabel); }
 			fFirst = 0;
 		}
 		FILE *fp = fopen(sLabel,"a");
-		if ( fp==NULL ) { PRT("fail fopen()\n"); debug(); }
+		if ( fp==NULL ) { DEBUG_PRT("fail fopen()\n"); }
 //		fprintf(fp,"%.0f\n", dcnn_label_data[r]);
 		fprintf(fp,"%u\n",(unsigned int)(dcnn_labels[r][0]));
 		fprintf(fp,"%d\n",dcnn_labels[r][1]);
@@ -574,19 +574,19 @@ void shogi::make_policy_leveldb()
 	}; 
 
 //	if ( FV_LEARNING==0 ) { PRT("\n\nset FV_LEARNING=1 for ignoring make_mm3_10_pattern_root()\n\n\n"); debug(); }
-	if ( fMAKE_LEVELDB == 0 ) { PRT("set fMAKE_LEVELDB=1\n"); debug(); }
+	if ( fMAKE_LEVELDB == 0 ) { DEBUG_PRT("set fMAKE_LEVELDB=1\n"); }
 
 
 	create_convert_db();
 	dcnn_data = (unsigned char(*)[DCNN_CHANNELS][B_SIZE][B_SIZE])malloc( DCNN_DATA_SIZE );
-	if ( dcnn_data == NULL ) { PRT("fail malloc()\n"); debug(); }
+	if ( dcnn_data == NULL ) { DEBUG_PRT("fail malloc()\n"); }
 	clear_dcnn_data();
 
 //	dcnn_label_data = (float *)malloc( STOCK_MAX * sizeof(float) );
 //	if ( dcnn_label_data == NULL ) { PRT("fail malloc()\n"); debug(); }
 //	memset(dcnn_label_data, 0, STOCK_MAX * sizeof(float) );
 	dcnn_labels = (int(*)[2])malloc( DCNN_LABELS_SIZE );
-	if ( dcnn_labels == NULL ) { PRT("fail malloc()\n"); debug(); }
+	if ( dcnn_labels == NULL ) { DEBUG_PRT("fail malloc()\n"); }
 	memset(dcnn_labels, 0, DCNN_LABELS_SIZE );
 
 	// i362_pro_flood, 6254 棋譜(Test), 448365 棋譜 (20279263局面) 217545-716-230104 先手勝率0.514
@@ -811,11 +811,11 @@ void get_c_y_x_from_move(int *pc, int *py, int *px, int pack_move)
 void make_label_leveldb()
 {			
 	int ct1 = get_clock();
-	if ( DCNN_CHANNELS != LABEL_CHANNELS ) { PRT("DCNN_CHANNELS err.\n"); debug(); }
+	if ( DCNN_CHANNELS != LABEL_CHANNELS ) { DEBUG_PRT("DCNN_CHANNELS err.\n"); }
 
 	create_convert_db();
 	dcnn_data = (unsigned char(*)[DCNN_CHANNELS][B_SIZE][B_SIZE])malloc( DCNN_DATA_SIZE );
-	if ( dcnn_data == NULL ) { PRT("fail malloc()\n"); debug(); }
+	if ( dcnn_data == NULL ) { DEBUG_PRT("fail malloc()\n"); }
 	clear_dcnn_data();
 
 	FILE *fp = fopen("test_i362_pro_flood_leveldb.txt","r");
@@ -1552,7 +1552,7 @@ int getNetChannels(int net_type)
 	if ( net_type == NET_128 ) return 128;
 	if ( net_type == NET_361 ) return 361;
 	if ( net_type == NET_362 ) return 362;
-	PRT("unknown nModel\n"); debug();
+	DEBUG_PRT("unknown nModel\n");
 	return 0;
 }
 
@@ -1857,7 +1857,7 @@ void hash_shogi_table_clear()
 	Hash_Shogi_Mask       = Hash_Shogi_Table_Size - 1;
 	HASH_ALLOC_SIZE size = sizeof(HASH_SHOGI) * Hash_Shogi_Table_Size;
 	if ( hash_shogi_table == NULL ) hash_shogi_table = (HASH_SHOGI*)malloc( size );
-	if ( hash_shogi_table == NULL ) { PRT("Fail malloc hash_shogi\n"); debug(); }
+	if ( hash_shogi_table == NULL ) { DEBUG_PRT("Fail malloc hash_shogi\n"); }
 	PRT("HashShogi=%7d(%3dMB),sizeof(HASH_SHOGI)=%d,Hash_SHOGI_Mask=%d\n",Hash_Shogi_Table_Size,(int)(size/(1024*1024)),sizeof(HASH_SHOGI),Hash_Shogi_Mask);
 	hash_shogi_table_reset();
 }
@@ -1902,7 +1902,7 @@ void hash_half_del()
 		double occupy = hash_shogi_use*100.0/Hash_Shogi_Table_Size;
 		PRT("hash del=%d,age=%d,minus=%d, %.0f%%(%d/%d)\n",del,thinking_age,age_minus,occupy,hash_shogi_use,Hash_Shogi_Table_Size);
 		if ( hash_shogi_use < limit_use ) break;
-		if ( age_minus==0 ) { PRT("age_minus=0\n"); debug(); }
+		if ( age_minus==0 ) { DEBUG_PRT("age_minus=0\n"); }
 	}
 }
 
@@ -1956,7 +1956,7 @@ research_empty_block:
 	}
 	int sum = 0;
 	for (int i=0;i<Hash_Shogi_Table_Size;i++) { sum = hash_shogi_table[i].deleted; PRT("%d",hash_shogi_table[i].deleted); }
-	PRT("\nno child hash Err loop=%d,hash_shogi_use=%d,first_n=%d,del_sum=%d(%.1f%%)\n",loop,hash_shogi_use,first_n,sum, 100.0*sum/Hash_Shogi_Table_Size); debug(); return NULL;
+	DEBUG_PRT("\nno child hash Err loop=%d,hash_shogi_use=%d,first_n=%d,del_sum=%d(%.1f%%)\n",loop,hash_shogi_use,first_n,sum, 100.0*sum/Hash_Shogi_Table_Size); return NULL;
 }
 
 float f_rnd()
@@ -2207,12 +2207,11 @@ double shogi::uct_tree(Color sideToMove)
 	HASH_SHOGI *phg = HashShogiReadLock();	// phgに触る場合は必ずロック！
 
 	if ( phg->used == 0 ) {	// 1手目に対して2手目がすべての同じ(絶対手)の場合
-		PRT("not created? 深=%d,col=%d,c_num=%d\n",fukasa,phg->col,phg->child_num);
-		debug();
+		DEBUG_PRT("not created? 深=%d,col=%d,c_num=%d\n",fukasa,phg->col,phg->child_num);
 //		create_node(sideToMove, phg);
 	}
 
-	if ( phg->col != sideToMove ) { PRT("hash col Err. phg->col=%d,col=%d,age=%d(%d),child_num=%d,games_sum=%d,sort=%d,phg->hash=%" PRIx64 "\n",phg->col,sideToMove,phg->age,thinking_age,phg->child_num,phg->games_sum,phg->sort_done,phg->hashcode64); debug(); }
+	if ( phg->col != sideToMove ) { DEBUG_PRT("hash col Err. phg->col=%d,col=%d,age=%d(%d),child_num=%d,games_sum=%d,sort=%d,phg->hash=%" PRIx64 "\n",phg->col,sideToMove,phg->age,thinking_age,phg->child_num,phg->games_sum,phg->sort_done,phg->hashcode64); }
 
 	int child_num = phg->child_num;
 
@@ -2281,7 +2280,7 @@ select_again:
 	path[fukasa] = pc->move;	// 手順を（位置を）記憶
 	hash_path[fukasa] = get_hashcode64();
 	fukasa++;
-	if ( fukasa >= D_MAX ) { PRT("depth over=%d\n",fukasa); debug(); }
+	if ( fukasa >= D_MAX ) { DEBUG_PRT("depth over=%d\n",fukasa); }
 
 	double win = 0;
 
@@ -2321,7 +2320,7 @@ select_again:
 		if ( fVirtualLoss ) {
 			phg->games_sum -= VL_N;
 			pc->games      -= VL_N;		// gamesを減らすのは非常に危険！ あちこちで games==0 で判定してるので
-			if ( pc->games < 0 ) { PRT("Err pc->games=%d\n",pc->games); debug(); }
+			if ( pc->games < 0 ) { DEBUG_PRT("Err pc->games=%d\n",pc->games); }
 			if ( pc->games == 0 ) pc->value = 0;
 			else                  pc->value = (float)((((double)pc->games+VL_N) * pc->value - one_win*VL_N) / pc->games);
 		}
@@ -2523,7 +2522,7 @@ float shogi::get_network_policy_value(Color sideToMove, int ply, HASH_SHOGI *phg
 void self_mcts_loop()
 {
 #ifdef SELFPLAY_COM	// YSS同士のシリアル対戦の場合、すぐに終わる。
-	PRT("SELFPLAY_COM Err\n"); debug();
+	DEBUG_PRT("SELFPLAY_COM Err\n");
 #endif
     { extern int fNowPlaying; fNowPlaying = 0; }	// 定跡無視
 	int save_games = 0;
@@ -2559,7 +2558,7 @@ void self_mcts_loop()
 		fclose(fp);
 		
 		fp = fopen("abc.txt","a");
-		if ( fp == NULL ) { PRT("fail fopen\n"); debug(); }
+		if ( fp == NULL ) { DEBUG_PRT("fail fopen\n"); }
 		if ( loop==max_loop ) draw++;
 		if ( loop!=max_loop && (loop&1) ) swin++;
 		fprintf(fp,"%5d,uct_loop=%4d, %5d/%5d/%5d(%.4f), %3d:%s\n",save_games,UCT_LOOP_FIX,swin,draw,save_games,(double)(swin+draw/2)/save_games,loop,sr);
@@ -2718,7 +2717,7 @@ ZERO_DB zdb_one;
 ZERO_DB zdb[ZERO_DB_SIZE];
 int *pZDBsum = NULL;
 int zdb_count = 0;
-int zdb_count_start = 2100000; //390000;//130000;//460000;//29700000; //18200000;//23400000; //20300000; //18800000; //16400000;	//10300000; //5200000;	// 400万棋譜から読み込む場合は4000000
+int zdb_count_start = 11600000; //10300000; //9500000;//8500000; //7400000; //5220000; //3200000; //2100000; //390000;//130000;//460000;//29700000; //18200000;//23400000; //20300000; //18800000; //16400000;	//10300000; //5200000;	// 400万棋譜から読み込む場合は4000000
 int zero_kif_pos_num = 0;
 int zero_kif_games = 0;
 const int MINI_BATCH = 128;	// aoba_zero.prototxt の cross_entroy_scale も同時に変更すること！layerのnameも要変更
@@ -2731,7 +2730,7 @@ const int fWwwSample = 0;		// fReplayLearning も同時に1
 void init_zero_kif_db()
 {
 	if ( pZDBsum == NULL ) pZDBsum = (int*)malloc( ZERO_DB_SIZE * sizeof(int) );
-	if ( pZDBsum == NULL ) { PRT("Fail malloc\n"); debug(); }
+	if ( pZDBsum == NULL ) { DEBUG_PRT("Fail malloc\n"); }
 
 	memset(pZDBsum,0,ZERO_DB_SIZE * sizeof(int));
 	int i;
@@ -3231,7 +3230,7 @@ void shogi::load_exist_all_kif()
 	update_pZDBsum();
 
 	PRT("zdb_count=%d(count=%d),games=%d,pos_num=%d, %.3f sec\n",zdb_count,count,zero_kif_games,zero_kif_pos_num,get_spend_time(ct1));
-	if ( zdb_count_start != 0 && count < ZERO_DB_SIZE ) { PRT("Err. replay buf is not filled.\n"); debug(); }
+	if ( zdb_count_start != 0 && count < ZERO_DB_SIZE ) { DEBUG_PRT("Err. replay buf is not filled.\n"); }
 }
 
 int shogi::wait_and_get_new_kif(int next_weight_n)
@@ -3451,7 +3450,7 @@ void shogi::copy_restore_dccn_init_board(int handicap, bool fCopy)
 void shogi::init_prepare_kif_db()
 {
 //	fSelectZeroDB = 1;
-	if ( fMAKE_LEVELDB ) { PRT("fMAKE_LEVELDB=1 ! Err\n"); debug(); }
+	if ( fMAKE_LEVELDB ) { DEBUG_PRT("fMAKE_LEVELDB=1 ! Err\n"); }
 	init_rnd521( (int)time(NULL)+getpid_YSS() );		// 起動ごとに異なる乱数列を生成
 
 	init_zero_kif_db();
@@ -3487,7 +3486,7 @@ int binary_search_kif_db(int r)
 		if ( prev_mid == mid ) break;
 		prev_mid = mid;
 	}
-	if ( mid < 0 ) { PRT("mid < 0 Err\n"); debug(); }
+	if ( mid < 0 ) { DEBUG_PRT("mid < 0 Err\n"); }
     if ( pZDBsum[min] > r ) return min;
     if ( pZDBsum[mid] > r ) return mid;
     return max;
@@ -3571,14 +3570,14 @@ void shogi::prepare_kif_db(int fPW, int mini_batch, float *data, float *label_po
 			sum += p->moves;
 			if ( sum > r ) {
 				t = r - (sum - p->moves);
-				if ( t >= p->moves || t < 0 ) { PRT("t over %d err.i=%d,j=%d,r=%d,sum=%d\n",t,i,j,r,sum); debug(); }
+				if ( t >= p->moves || t < 0 ) { DEBUG_PRT("t over %d err.i=%d,j=%d,r=%d,sum=%d\n",t,i,j,r,sum); }
 				break;
 			}
 		}
 		int bi = binary_search_kif_db(r);	// 16秒が1秒に
 		ZERO_DB *p = &zdb[bi];
 		t = r - (pZDBsum[bi] - zdb[bi].moves);
-		if ( t < 0 || t >= MAX_ZERO_MOVES ) { PRT("t=%d(%d) err.j=%d,r=%d\n",t,p->moves,j,r); debug(); }
+		if ( t < 0 || t >= MAX_ZERO_MOVES ) { DEBUG_PRT("t=%d(%d) err.j=%d,r=%d\n",t,p->moves,j,r); }
 //		PRT("%3d:%7d,j=%4d:bi=%3d,t=%3d,moves=%3d,res=%d\n",i,r,j,bi,t,p->moves,p->result);
 //		if ( bi != j ) debug();
 //		if ( r - (pZDBsum[bi] - pZDB[bi].moves) != t ) debug();
@@ -3626,7 +3625,7 @@ void shogi::prepare_kif_db(int fPW, int mini_batch, float *data, float *label_po
 		// 実際の勝敗と探索値の平均を学習。https://tadaoyamaoka.hatenablog.com/entry/2018/07/01/121411
 		float ave_r = ((float)win_r + score) / 2.0;
 		if ( score_x10k == NO_ROOT_SCORE ) ave_r = win_r;
-		ave_r = win_r;	// not use average
+//		ave_r = win_r;	// not use average
 //		PRT("(%.3f,%.3f)",(float)win_r,score);
 
 		int playmove_id = 0;
@@ -3922,7 +3921,7 @@ void load_aoba_txt_weight( const caffe::shared_ptr<caffe::Net<float>> &net, std:
 		PRT(", %d\n",sum_layer);
 	}
 	PRT("sum=%d,param_num=%d,set_num=%d\n",sum,param_num,set_num);
-	if ( sum != set_num || sum != param_num ) { PRT("weight param Err.\n"); debug(); }
+	if ( sum != set_num || sum != param_num ) { DEBUG_PRT("weight param Err.\n"); }
 }
 
 void start_zero_train(int *p_argc, char ***p_argv )
@@ -3965,9 +3964,17 @@ void start_zero_train(int *p_argc, char ***p_argv )
 //	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210607/_iter_60000.caffemodel";
 //	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210610/_iter_90000.caffemodel";
 //	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210615_lr0001/_iter_400000.caffemodel";
-	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210722_lr0001/_iter_1730000.caffemodel";	// w213
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210722_lr0001/_iter_1730000.caffemodel";	// w213
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210805_lr0001/_iter_1070000.caffemodel";	// w320
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210828_lr00001/_iter_2030000.caffemodel";// w523
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210922_kldgain/_iter_2380000.caffemodel";// w761
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20210922_kldgain/_iter_2210000.caffemodel";// w744 巻き戻し
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20211002/_iter_1150000.caffemodel";	// w859 雷で停電
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20211014/_iter_950000.caffemodel";		// w954 雷で停電
+//	const char sNet[] = "/home/yss/shogi/learn/snapshots/20211023/_iter_760000.caffemodel";		// w1030 雷で停電
+	const char sNet[] = "/home/yss/shogi/learn/snapshots/20211118/_iter_1390000.caffemodel";	// w1169 雷で停電
 
-	int next_weight_number = 214;	// 現在の最新の番号 +1
+	int next_weight_number = 1170;	// 現在の最新の番号 +1
 
 	net->CopyTrainedLayersFrom(sNet);	// caffemodelを読み込んで学習を再開する場合
 //	load_aoba_txt_weight( net, "/home/yss/w000000000689.txt" );	// 既存のw*.txtを読み込む。*.caffemodelを何か読み込んだ後に
@@ -3984,15 +3991,13 @@ wait_again:
 		add = PS->add_a_little_from_archive();
 		if ( add < 0 ) { PRT("done..\n"); solver->Snapshot(); return; }
 		if ( zdb_count <=  ZERO_DB_SIZE ) goto wait_again;
-//		if ( zdb_count <= 30000000 ) goto wait_again;
 //		if ( zdb_count <= 18850000 ) goto wait_again;
 //		if ( zdb_count >  18505000 ) { PRT("done..w648.\n"); solver->Snapshot(); return; }
-//		if ( iteration >= 1000000 ) { PRT("done...\n"); solver->Snapshot(); return; }
 //		if ( iteration > 1000 ) solver_param.set_base_lr(0.01);
 
 	} else {
-		if ( 1 && iteration==0 && next_weight_number==214 ) {
-			add = 3000;	// 初回のみダミーで10000棋譜追加したことにする
+		if ( 1 && iteration==0 && next_weight_number==1170 ) {
+			add = 200;	// 初回のみダミーで10000棋譜追加したことにする
 		} else {
 			add = PS->wait_and_get_new_kif(next_weight_number);
 		}
