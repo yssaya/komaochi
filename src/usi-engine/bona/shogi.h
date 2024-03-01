@@ -131,7 +131,8 @@ extern unsigned char ailast_one[512];
 //#define BNZ_VER                 "23"	// 20210920 no change. autousi uses kldgain.
 //#define BNZ_VER                 "24"	// 20210922 sum_games bug fix.
 //#define BNZ_VER                 "25"	// 20211102 mtemp 1.3 (autousi)
-#define BNZ_VER                 "26"	// 20211204 final with weight w1250. -name
+//#define BNZ_VER                 "26"	// 20211204 final with weight w1250. -name
+#define BNZ_VER                 "27"	// 20240301 OpenCL bug fixed for latest NVIDIA driver update
 #define BNZ_NAME                "AobaKomaochi"
 
 #define REP_MAX_PLY             32

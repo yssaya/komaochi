@@ -530,7 +530,7 @@ void wmma_mma(uint *mc, __local const uint *ma, __local const uint *mb) {
         "r"(mb[SGEMM_NLN*WRAP_SIZE*4]), "r"(mb[SGEMM_NLN*WRAP_SIZE*5]),
         "r"(mb[SGEMM_NLN*WRAP_SIZE*6]), "r"(mb[SGEMM_NLN*WRAP_SIZE*7])); }
 
-void wmma_store(__global float *dest, const float *src) {
+void wmma_store(__global void *dest, const uint *src) {
   asm("{  wmma.store.d.sync.aligned.row" SGEMM_TDM ".global.f16\n"
       "     [%4], {%0, %1, %2, %3}, %5; }"
       :: "r"(src[0]), "r"(src[1]), "r"(src[2]), "r"(src[3]),
@@ -556,7 +556,7 @@ void wmma_mma(uint *mc, __local const uint *ma, __local const uint *mb) {
         "r"(mb[SGEMM_NLN*WRAP_SIZE*4]), "r"(mb[SGEMM_NLN*WRAP_SIZE*5]),
         "r"(mb[SGEMM_NLN*WRAP_SIZE*6]), "r"(mb[SGEMM_NLN*WRAP_SIZE*7])); }
 
-void wmma_store(__global float *dest, const float *src) {
+void wmma_store(__global void *dest, const uint *src) {
   asm("{  wmma.store.d.sync.aligned.row" SGEMM_TDM ".global.f32\n"
       "     [%8], {%0, %1, %2, %3, %4, %5, %6, %7}, %9; }"
       :: "r"(src[0]), "r"(src[1]), "r"(src[2]), "r"(src[3]),

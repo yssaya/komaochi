@@ -13,14 +13,19 @@ Ubuntu での手順を記します。ビルド前に、利用したいハード�
 
 - Boost や liblzma 等をインストール
 
-> sudo apt install libboost-dev libboost-program-options-dev
-> sudo apt install libboost-filesystem-dev liblzma-dev zlib1g-dev
-> sudo apt install opencl-headers ocl-icd-libopencl1 ocl-icd-opencl-dev
-> sudo apt install libopenblas-base libopenblas-dev
+$ sudo apt install libboost-dev libboost-program-options-dev
+$ sudo apt install libboost-filesystem-dev liblzma-dev zlib1g-dev
+$ sudo apt install opencl-headers ocl-icd-libopencl1 ocl-icd-opencl-dev
+$ sudo apt install libopenblas-base libopenblas-dev
 
 - make を実行
 
-> make -j[number of threads]
+$ make -j[number of threads]
+
+opneblasでエラーがでる場合は Makefile.config で下の2つのコメントを外します。
+
+OpenBLAS_INC_AOBA := /usr/include/openblas
+OpenBLAS_LIB_AOBA := /usr/lib/openblas
 
 CPUのみで計算を行うプログラムをビルドしたいならば、
 src/usi_engine/Makefile の51行目を
@@ -34,33 +39,33 @@ CentOS での手順を記します。
 
 - liblzma などをインストール
 
-> sudo yum install epel-release
-> sudo yum install xz-devel zlib-devel opencl-headers
+$ sudo yum install epel-release
+$ sudo yum install xz-devel zlib-devel opencl-headers
 
 - GCC 7.3.1 をインストール
 
-> sudo yum -y install centos-release-scl
-> sudo yum -y install devtoolset-7
-> scl enable devtoolset-7 bash
+$ sudo yum -y install centos-release-scl
+$ sudo yum -y install devtoolset-7
+$ scl enable devtoolset-7 bash
 
 GCC 7.3.1 が利用可能な環境で bash が起動します。
 
 - boost 1.58.0 をインストール
 
-> cd
-> wget http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
-> gzip -dc boost_1_58_0.tar.gz | tar xvf -
-> cd boost_1_58_0
-> ./bootstrap.sh
-> ./b2 install -j[number of threads] --prefix=/[a path with write permission]/inst-dts7
+$ cd
+$ wget http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
+$ gzip -dc boost_1_58_0.tar.gz | tar xvf -
+$ cd boost_1_58_0
+$ ./bootstrap.sh
+$ ./b2 install -j[number of threads] --prefix=/[a path with write permission]/inst-dts7
 
 - OpenBLAS を使うならばこれをインストール
 
-> cd
-> git clone https://github.com/xianyi/OpenBLAS.git
-> cd OpenBLAS
-> make -j[number of threads]
-> make install PREFIX=/[a path with write permission]/inst-dts7
+$ cd
+$ git clone https://github.com/xianyi/OpenBLAS.git
+$ cd OpenBLAS
+$ make -j[number of threads]
+$ make install PREFIX=/[a path with write permission]/inst-dts7
 
 - Intel MKL を使うならばこれをインストール
 
@@ -78,14 +83,14 @@ Intel 社が提供する情報に従ってインストールして下さい。
 コンンパイラとリンカのパスを設定します。
 
 Bourne Shell 系ならば
-> export CPLUS_INCLUDE_PATH=/path to inst-dts7/include:$CPLUS_INCLUDE_PATH
-> export LIBRARY_PATH=/path to inst-dts7/lib:$LIBRARY_PATH
-> export LD_RUN_PATH=/path to inst-dts7/lib:$LD_RUN_PATH
+$ export CPLUS_INCLUDE_PATH=/path to inst-dts7/include:$CPLUS_INCLUDE_PATH
+$ export LIBRARY_PATH=/path to inst-dts7/lib:$LIBRARY_PATH
+$ export LD_RUN_PATH=/path to inst-dts7/lib:$LD_RUN_PATH
 
 C Shell 系ならば
-> setenv CPLUS_INCLUDE_PATH /path to inst-dts7/include:$CPLUS_INCLUDE_PATH
-> setenv LIBRARY_PATH /path to inst-dts7/lib:$LIBRARY_PATH
-> setenv LD_RUN_PATH /path to inst-dts7/lib:$LD_RUN_PATH
+$ setenv CPLUS_INCLUDE_PATH /path to inst-dts7/include:$CPLUS_INCLUDE_PATH
+$ setenv LIBRARY_PATH /path to inst-dts7/lib:$LIBRARY_PATH
+$ setenv LD_RUN_PATH /path to inst-dts7/lib:$LD_RUN_PATH
 
 これらに加えて、OpenCL やIntel MKL などのパスの環境変数も必要ならば設定して
 下さい。OpenCL, OpenBLAS 及び Intel MKL のパスは Makefile.config でも指定可
@@ -93,7 +98,7 @@ C Shell 系ならば
 
 - make を実行
 
-> make -j[number of threads]
+$ make -j[number of threads]
 
 CPUのみで計算を行うプログラムをビルドしたいならば、
 src/usi_engine/Makefile の51行目を
@@ -105,10 +110,16 @@ CPU_ONLY = 1
 
 - autousi.exe のビルド
 
+AobaZeroの win/* をディレクトリごとコピーします。
+
+git clone -b develop https://github.com/kobanium/aobazero.git
+
+> cp -p -r ../aobazero/win ./
+
+xcopy /e c:\shogi\aobazero\win c:\shogi\komaochi
+
 Visual Studio 2017の「VS2017用 x64 Native Toolsコマンドプロンプト」を起動し、
 バッチファイルを実行します。
-AobaZeroの win/* をディレクトリごとコピーします。
-> cp -p -r ../aobazero/win ./
 
 > build_vs.bat
 
